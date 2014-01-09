@@ -24,24 +24,43 @@ Usage
 
 Just use SmartFactory in your tests to create objects:
 
-`Account account = (Account)SmartFactory.createSObject('Account');` 
+  Account account = (Account)SmartFactory.createSObject('Account');
 
 To cascade and create lookup objects:
 
-`Contact contact = (Contact)SmartFactory.createSObject('Contact', true);`
+  Contact contact = (Contact)SmartFactory.createSObject('Contact', true);
 
 The same syntax is used for custom objects:
 
-`Custom_Object__c customObject = (Custom_Object__c)SmartFactory.createSObject('Custom_Object__c');`   
+  Custom_Object__c customObject = (Custom_Object__c)SmartFactory.createSObject('Custom_Object__c');
+
+Create a list of objects, providing a specific value for some fields:
+
+  Map<String, Object> defaults = new Map<String, Object>{
+      'Birthdate'=> Date.newInstance(1980, 1, 1),           // all records will get this date
+      'Department'=> new List<String>{'Dept 1', 'Dept 2'}   // half will get the first value, half the second
+  };
+  List<SObject> contactsAsSObjects = SmartFactory.createSObjectList('Contact', 20, defaults);
+
+Create a list of objects, specifying parent objects:
+
+  // create 5 accounts
+  list<Account> accountList = (list<Account>)(SmartFactory.createSObjectList('Account', 5));
+  insert accountList;
+
+  // each account gets 4 contacts
+  List<Contact> contactList = (List<Contact>)(SmartFactory.createSObjectList(
+      'Contact', 20, new Map<String, Object>{'AccountId' => accountList});
 
 See SmartFactory_Test for additional examples.
+
 
 Future Work
 ----------- 
 
 TODO comments note areas for additional development. Key areas include:
 
-1. Provide an field override map that allows callers to specify default values for specific objects and fields    
+1. Provide an field override map that allows callers to specify default values for specific objects and fields [DONE!]
 2. Provide a recursion limit for lookups to the same object type   
 
 Help and Discussion
