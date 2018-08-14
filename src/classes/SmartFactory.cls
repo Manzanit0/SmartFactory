@@ -169,6 +169,9 @@ public with sharing class SmartFactory {
 		Schema.DescribeFieldResult fieldDescribe = field.getDescribe();
 		Schema.DisplayType ft = fieldDescribe.getType();
 		String fn = fieldDescribe.getName();
+
+        // Latitude fields cannot be bigger than 90, and longitude than 180. So reset :)
+        counter = counter > 90 ? 0 : counter;
 		
 		if (fieldDescribe.isCreateable() && 
 				(
