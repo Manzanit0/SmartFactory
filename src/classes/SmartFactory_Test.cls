@@ -14,39 +14,44 @@
    limitations under the License.
 */   
 
-@isTest
+@IsTest
 private class SmartFactory_Test {
 	static {
-		SmartFactory.FillAllFields = true; // increase test coverage without creating custom objects
-	}  
+		SmartFactory.fillAllFields = true; // increase test coverage without creating custom objects
+	}
 
-	static testMethod void createsSingleObjectWithSingleRequiredStringField() {
+	@IsTest
+	static void createsSingleObjectWithSingleRequiredStringField() {
 		Account account = (Account)SmartFactory.createSObject('Account');
 		insert account;
 		System.assert(account.Id != null);
 		System.assert(account.Name != null);
 	}
-	
-	static testMethod void createsUser() {
+
+	@IsTest
+	static void createsUser() {
 		User u = (User)SmartFactory.createSObject('User');
 		insert u;
 		System.assert(u.Id != null);
 	}
 
-	static testMethod void createsObjectWithCascadeSetsLookupField() {
-		Contact contact = (Contact)SmartFactory.createSObject('Contact', true);
-		insert contact;
-		System.assert(contact.Id != null);
-		System.assert(contact.AccountId != null);
+	@IsTest
+	static void createsObjectWithCascadeSetsLookupField() {
+		Contact Contact = (Contact)SmartFactory.createSObject('Contact', true);
+		insert Contact;
+		System.assert(Contact.Id != null);
+		System.assert(Contact.AccountId != null);
 	}
-	
-	static testMethod void createsObjectWithoutCascadeDoesNotSetLookupField() {
-		Contact contact = (Contact)SmartFactory.createSObject('Contact', false);
-		insert contact;
-		System.assert(contact.AccountId == null);
+
+	@IsTest
+	static void createsObjectWithoutCascadeDoesNotSetLookupField() {
+		Contact Contact = (Contact)SmartFactory.createSObject('Contact', false);
+		insert Contact;
+		System.assert(Contact.AccountId == null);
 	}
-	
-	static testMethod void createObjectWithUnsupportedTypeThrowsException() {
+
+	@IsTest
+	static void createObjectWithUnsupportedTypeThrowsException() {
 		try {
 			SmartFactory.createSObject('Unsupported');
 			System.assert(false);
@@ -54,8 +59,9 @@ private class SmartFactory_Test {
 			System.assert(true);
 		}
 	}
-	
-	static testMethod void creating401UniqueRecords() {
+
+	@IsTest
+	static void creating401UniqueRecords() {
 		
 		// if you hit the limit of CPU time due to many custom fields, uncomment the following line
 		// SmartFactory.FillAllFields = false;
@@ -67,9 +73,10 @@ private class SmartFactory_Test {
 			Contact c = (Contact) s;
 			System.assert(c.Id != null);
 		}
-	}  
+	}
 
-	static testMethod void creating200UniqueRecordsWithCascade() {
+	@IsTest
+	static void creating200UniqueRecordsWithCascade() {
 
 		// if you hit the limit of CPU time due to many custom fields, uncomment the following line
 		// SmartFactory.FillAllFields = false;
@@ -82,15 +89,20 @@ private class SmartFactory_Test {
 			System.assert(c.Id != null);
 		}
 	}
-	
-    static testMethod void loadTestWith100PlusAccountNContacts() {
-    	for (Integer idx = 0; idx <= 101; idx++)
-    		Account account = (Account)SmartFactory.createSObject('Account');
-		for (Integer idx = 0; idx <= 101; idx++)
-    		Contact cont = (Contact)SmartFactory.createSObject('Contact');    		
+
+	@IsTest
+    static void loadTestWith100PlusAccountNContacts() {
+    	for (Integer idx = 0; idx <= 101; idx++) {
+			Account account = (Account)SmartFactory.createSObject('Account');
+		}
+
+		for (Integer idx = 0; idx <= 101; idx++) {
+			Contact cont = (Contact)SmartFactory.createSObject('Contact');
+		}
     }
 
-	static testMethod void creatingRecordsWithSpecificDefaults() {
+	@IsTest
+	static void creatingRecordsWithSpecificDefaults() {
 
 		Map<String, Object> defaults = new Map<String, Object>{
 			'Birthdate'=> Date.newInstance(1980, 1, 1),          // all records will get this date
@@ -106,10 +118,11 @@ private class SmartFactory_Test {
 			System.assert(c.Department.startsWith('Dept'));
 			System.assertEquals(Date.newInstance(1980, 1, 1), c.Birthdate);
 		}
-		system.debug(loggingLevel.WARN, (Contact)(contactsAsSObjects[0]));
-	}  
+		System.debug(LoggingLevel.WARN, (Contact)(contactsAsSObjects[0]));
+	}
 
-	static testMethod void creatingRecordsForSpecificParentId() {
+	@IsTest
+	static void creatingRecordsForSpecificParentId() {
 		Account account = (Account)SmartFactory.createSObject('Account');
 		insert account;
 
@@ -123,9 +136,10 @@ private class SmartFactory_Test {
 			System.assert(c.Id != null);
 			System.assert(c.AccountId == account.Id);
 		}
-	}  
+	}
 
-	static testMethod void creatingRecordsForSpecificParentObject() {
+	@IsTest
+	static void creatingRecordsForSpecificParentObject() {
 		Account account = (Account)SmartFactory.createSObject('Account');
 		insert account;
 
@@ -140,12 +154,13 @@ private class SmartFactory_Test {
 			System.assert(c.Id != null);
 			System.assert(c.AccountId == account.Id);
 		}
-	}  
+	}
 
-	static testMethod void creatingRecordsWithListOfDefaultParents() {
+	@IsTest
+	static void creatingRecordsWithListOfDefaultParents() {
 
 		// create 5 accounts
-		list<Account> accountList = (list<Account>)(SmartFactory.createSObjectList('Account', 5));
+		List<Account> accountList = (List<Account>)(SmartFactory.createSObjectList('Account', 5));
 		insert accountList;
 
 		// each account gets 4 contacts
@@ -153,8 +168,8 @@ private class SmartFactory_Test {
 		insert contactsAsSObjects;
 
 		Id acctId = accountList[0].Id;
-		list<Contact> contactCount = [select id from contact where accountId = : acctId ]; 
-		system.assertEquals(4, contactCount.size());
+		List<Contact> contactCount = [SELECT Id FROM Contact WHERE AccountId = : acctId ]; 
+		System.assertEquals(4, contactCount.size());
 	}  
 
 }
