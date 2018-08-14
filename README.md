@@ -13,7 +13,9 @@ The initial version won the [Mavens Consulting](http://mavens.force.com/) 2011 h
 Installation
 ------------
 
-For an easy, 1-click installation: [SmartFactory for Force.com on Code Share](http://developer.force.com/codeshare/ProjectPage?id=a063000000Db0CSAAZ) 
+<a href="https://githubsfdeploy.herokuapp.com" target="_blank">
+    <img alt="Deploy to Salesforce" src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png">
+</a>
 
 To use the source code with a Salesforce org: [How To Use Github and the Force.com IDE](http://blog.sforce.com/sforce/2011/04/how-to-use-git-github-force-com-ide-open-source-labs-apps.html)  
 
@@ -24,35 +26,37 @@ Usage
 
 Just use SmartFactory in your tests to create objects:
 
-  Account account = (Account)SmartFactory.createSObject('Account');
+  `Account account = (Account)SmartFactory.createSObject('Account');`
 
 To cascade and create lookup objects:
 
-  Contact contact = (Contact)SmartFactory.createSObject('Contact', true);
+  `Contact contact = (Contact)SmartFactory.createSObject('Contact', true);`
 
 The same syntax is used for custom objects:
 
-  Custom_Object__c customObject = (Custom_Object__c)SmartFactory.createSObject('Custom_Object__c');
+  `Custom_Object__c customObject = (Custom_Object__c)SmartFactory.createSObject('Custom_Object__c');`
 
 Create a list of objects, providing a specific value for some fields:
 
-  Map<String, Object> defaults = new Map<String, Object>{
+`  Map<String, Object> defaults = new Map<String, Object>{
       'Birthdate'=> Date.newInstance(1980, 1, 1),           // all records will get this date
       'Department'=> new List<String>{'Dept 1', 'Dept 2'}   // half will get the first value, half the second
   };
-  List<SObject> contactsAsSObjects = SmartFactory.createSObjectList('Contact', 20, defaults);
+  List<SObject> contactsAsSObjects = SmartFactory.createSObjectList('Contact', 20, defaults);`
 
 Create a list of objects, specifying parent objects:
 
-  // create 5 accounts
-  list<Account> accountList = (list<Account>)(SmartFactory.createSObjectList('Account', 5));
+```
+  // Create 5 accounts
+  List<Account> accountList = (list<Account>)(SmartFactory.createSObjectList('Account', 5));
   insert accountList;
 
-  // each account gets 4 contacts
+  // Each account gets 4 contacts
   List<Contact> contactList = (List<Contact>)(SmartFactory.createSObjectList(
       'Contact', 20, new Map<String, Object>{'AccountId' => accountList});
+```
 
-See SmartFactory_Test for additional examples.
+See `SmartFactory_Test` for additional examples.
 
 
 Future Work
@@ -60,11 +64,5 @@ Future Work
 
 TODO comments note areas for additional development. Key areas include:
 
-1. Provide an field override map that allows callers to specify default values for specific objects and fields [DONE!]
-2. Provide a recursion limit for lookups to the same object type   
-
-Help and Discussion
--------------------
-
-For help and discussion, please use the project's [Google Group](http://groups.google.com/group/smartfactory-for-forcecom).         
+1. Provide a recursion limit for lookups to the same object type.    
 
